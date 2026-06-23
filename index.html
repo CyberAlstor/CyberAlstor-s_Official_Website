@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberAlstor | hacker & free software advocate</title>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-deep: #050a15;
+    --bg: #0a0f1e;
+    --bg-card: #0d1529;
+    --bg-card-hover: #111d36;
+    --border: #1a2744;
+    --border-glow: #0ea5e955;
+    --text: #e2e8f0;
+    --text-dim: #64748b;
+    --text-muted: #334155;
+    --cyan: #00d4ff;
+    --blue: #0ea5e9;
+    --blue-deep: #0369a1;
+    --green: #00ff88;
+    --green-dim: #22c55e;
+    --purple: #8b5cf6;
+    --red: #f43f5e;
+    --orange: #f59e0b;
+  }
+
+  ::selection { background: #0ea5e944; color: #fff; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-deep); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* ─── Binary Rain Canvas ─── */
+  #binary-rain {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.12;
+  }
+
+  /* ─── Floating Code Snippets ─── */
+  .floating-snippet {
+    position: fixed;
+    z-index: 0;
+    pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--cyan);
+    opacity: 0;
+    white-space: pre;
+    animation: floatSnippet var(--dur) var(--delay) infinite ease-in-out;
+    filter: blur(0.3px);
+  }
+  .floating-snippet .kw { color: var(--purple); }
+  .floating-snippet .fn { color: var(--blue); }
+  .floating-snippet .str { color: var(--green); }
+  .floating-snippet .cmt { color: var(--text-muted); }
+  .floating-snippet .num { color: var(--orange); }
+
+  @keyframes floatSnippet {
+    0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    10%  { opacity: var(--max-op); }
+    50%  { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: var(--max-op); }
+    90%  { opacity: var(--max-op); }
+    100% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  }
+
+  /* ─── Glow Orbs ─── */
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-orb-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, #0ea5e918, transparent 70%);
+    top: -100px; right: -100px;
+    animation: orbFloat1 20s infinite ease-in-out;
+  }
+  .glow-orb-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, #8b5cf612, transparent 70%);
+    bottom: 10%; left: -80px;
+    animation: orbFloat2 25s infinite ease-in-out;
+  }
+  .glow-orb-3 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, #00ff8808, transparent 70%);
+    top: 50%; right: 20%;
+    animation: orbFloat3 18s infinite ease-in-out;
+  }
+  @keyframes orbFloat1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-60px,80px)} }
+  @keyframes orbFloat2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(50px,-60px)} }
+  @keyframes orbFloat3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,40px)} }
+
+  /* ─── Main Content ─── */
+  .content-wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── Nav ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #050a15cc;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+  nav.scrolled { background: #050a15f2; box-shadow: 0 4px 30px #00000040; }
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--cyan);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo .prompt { color: var(--green); }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--cyan);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover::after { width: 100%; }
+
+  .mobile-toggle {
+    display: none;
+    background: none; border: none; color: var(--text);
+    cursor: pointer;
+  }
+
+  /* ─── Hero ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 24px 80px;
+    position: relative;
+  }
+  .hero-inner {
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+  }
+  .hero-terminal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: left;
+    margin-bottom: 40px;
+    box-shadow: 0 20px 60px -15px #0ea5e920, 0 0 0 1px #0ea5e908;
+  }
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #080d1a;
+    border-bottom: 1px solid var(--border);
+  }
+  .terminal-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .terminal-dot.r { background: #f43f5e; }
+  .terminal-dot.y { background: #f59e0b; }
+  .terminal-dot.g { background: #22c55e; }
+  .terminal-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-left: 8px;
+  }
+  .terminal-body {
+    padding: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 2;
+  }
+  .terminal-body .prompt-line { color: var(--green); }
+  .terminal-body .cmd { color: var(--cyan); }
+  .terminal-body .output { color: var(--text-dim); }
+  .terminal-body .highlight { color: var(--purple); }
+  .terminal-body .val { color: var(--orange); }
+
+  .cursor-blink {
+    display: inline-block;
+    width: 8px; height: 16px;
+    background: var(--cyan);
+    vertical-align: middle;
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .hero-tagline {
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+  .hero-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #fff 0%, var(--cyan) 50%, var(--purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-desc {
+    font-size: 16px;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+  .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+  /* ─── Buttons ─── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--cyan);
+    color: var(--bg-deep);
+    box-shadow: 0 0 20px #00d4ff30;
+  }
+  .btn-primary:hover {
+    background: #33e0ff;
+    box-shadow: 0 0 30px #00d4ff50;
+    transform: translateY(-1px);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--cyan);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover {
+    border-color: var(--cyan);
+    background: #00d4ff08;
+    transform: translateY(-1px);
+  }
+
+  /* ─── Section Styles ─── */
+  section {
+    padding: 80px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section-header {
+    margin-bottom: 48px;
+  }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::before {
+    content: '#';
+    color: var(--green);
+  }
+  .section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 600;
+    color: #fff;
+  }
+
+  /* ─── Skills ─── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .skill-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .skill-card:hover {
+    border-color: #0ea5e940;
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px -10px #0ea5e920;
+  }
+  .skill-card:hover::before { opacity: 1; }
+  .skill-icon {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    background: #0ea5e910;
+    border: 1px solid #0ea5e920;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: var(--cyan);
+  }
+  .skill-card h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .skill-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .skill-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #0ea5e90a;
+    border: 1px solid #0ea5e918;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── Projects ─── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .project-card:hover {
+    border-color: #0ea5e940;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px -10px #0ea5e918;
+  }
+  .project-header {
+    padding: 20px 24px 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .project-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: #0ea5e90d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cyan);
+  }
+  .project-links { display: flex; gap: 8px; }
+  .project-links a {
+    color: var(--text-muted);
+    transition: color 0.2s;
+    text-decoration: none;
+  }
+  .project-links a:hover { color: var(--cyan); }
+  .project-body { padding: 16px 24px 20px; }
+  .project-body h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .project-body p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .project-code {
+    background: #060b16;
+    border: 1px solid #1a274480;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    overflow-x: auto;
+  }
+  .project-code .kw { color: var(--purple); }
+  .project-code .fn { color: var(--blue); }
+  .project-code .str { color: var(--green); }
+  .project-code .cmt { color: var(--text-muted); font-style: italic; }
+  .project-code .num { color: var(--orange); }
+  .project-code .type { color: var(--cyan); }
+
+  /* ─── Activism ─── */
+  .activism-section {
+    background: linear-gradient(180deg, transparent 0%, #0ea5e903 50%, transparent 100%);
+    max-width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .activism-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .manifesto {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .manifesto::after {
+    content: '"';
+    position: absolute;
+    top: -20px; right: 20px;
+    font-size: 200px;
+    font-family: Georgia, serif;
+    color: #0ea5e908;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .manifesto p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    max-width: 700px;
+  }
+  .manifesto p strong {
+    color: var(--cyan);
+    font-weight: 500;
+  }
+  .causes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .cause-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .cause-card:hover {
+    border-color: #0ea5e930;
+    transform: translateY(-2px);
+  }
+  .cause-card .icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: #0ea5e90a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    color: var(--cyan);
+  }
+  .cause-card h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .cause-card p {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* ─── Terminal Contact ─── */
+  .contact-terminal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px -15px #0ea5e915;
+  }
+  .contact-body {
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .contact-info {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 2.2;
+  }
+  .contact-info .label { color: var(--green); }
+  .contact-info .value { color: var(--text-dim); }
+  .contact-info .value a {
+    color: var(--cyan);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .contact-info .value a:hover { color: #33e0ff; text-decoration: underline; }
+  .contact-form { display: flex; flex-direction: column; gap: 12px; }
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 10px 14px;
+    background: #060b16;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 2px #0ea5e915;
+  }
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder { color: var(--text-muted); }
+  .contact-form .btn { align-self: flex-start; }
+
+  /* ─── Footer ─── */
+  footer {
+    text-align: center;
+    background: #000;
+    padding: 40px 24px;
+    border-top: 1px solid var(--border);
+    margin: 0 auto;
+  }
+  footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--white);
+    line-height: 2;
+  }
+  footer a {
+    color: var(--cyan);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  footer a:hover { color: var(--cyan); }
+
+  /* ─── Scroll Reveal ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── Mobile Menu ─── */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #050a15f0;
+    backdrop-filter: blur(20px);
+    z-index: 99;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--cyan); }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .mobile-toggle { display: block; }
+    .contact-body { grid-template-columns: 1fr; }
+    .hero-terminal { display: none; }
+    .manifesto { padding: 24px; }
+    .manifesto::after { font-size: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Binary Rain Canvas -->
+<canvas id="binary-rain"></canvas>
+
+<!-- Glow Orbs -->
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<div class="glow-orb glow-orb-3"></div>
+
+<!-- Floating Code Snippets -->
+<div class="floating-snippet" style="top:12%;left:5%;--dur:22s;--delay:0s;--dx:30px;--dy:-40px;--rot:2deg;--max-op:0.35;">
+<span class="kw">func</span> <span class="fn">decompile</span>(bin []<span class="type">byte</span>) {
+  <span class="kw">for</span> i := <span class="num">0</span>; i &lt; <span class="fn">len</span>(bin); i++ {
+    <span class="fn">disasm</span>(bin[i:])
+  }
+}</div>
+
+<div class="floating-snippet" style="top:30%;right:4%;--dur:26s;--delay:3s;--dx:-25px;--dy:35px;--rot:-1.5deg;--max-op:0.3;">
+<span class="cmt"># GPG key verification</span>
+gpg --verify <span class="str">release.tar.gz.sig</span>
+<span class="cmt"># fingerprint: 4A3B 2C1D ...</span></div>
+
+<div class="floating-snippet" style="top:55%;left:3%;--dur:24s;--delay:6s;--dx:20px;--dy:-25px;--rot:1deg;--max-op:0.25;">
+<span class="kw">import</span> ghidra
+<span class="kw">from</span> ghidra <span class="kw">import</span> <span class="fn">decompile_function</span>
+
+prog = ghidra.<span class="fn">open_program</span>(<span class="str">"firmware.bin"</span>)</div>
+
+<div class="floating-snippet" style="top:75%;right:6%;--dur:20s;--delay:9s;--dx:-35px;--dy:20px;--rot:-2deg;--max-op:0.28;">
+<span class="cmt">/* kernel module hook */</span>
+<span class="kw">static</span> <span class="type">int</span> <span class="fn">hook_syscall</span>(
+  <span class="kw">const</span> <span class="type">struct</span> pt_regs *regs
+) { <span class="kw">return</span> <span class="num">0</span>; }</div>
+
+<div class="floating-snippet" style="top:88%;left:8%;--dur:28s;--delay:2s;--dx:15px;--dy:-30px;--rot:0.5deg;--max-op:0.22;">
+<span class="kw">license</span>: <span class="str">GPL-3.0-or-later</span>
+<span class="kw">repo</span>:    git.foxisms.dev
+<span class="kw">status</span>:  <span class="num">active</span> ✓</div>
+
+<div class="floating-snippet" style="top:18%;right:12%;--dur:30s;--delay:5s;--dx:-20px;--dy:25px;--rot:1.5deg;--max-op:0.2;">
+<span class="cmt">;; x86-64 shellcode</span>
+<span class="kw">xor</span>    rsi, rsi
+<span class="kw">mov</span>    al, <span class="num">0x3b</span>
+<span class="kw">syscall</span></div>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#skills" onclick="closeMobile()">Skills</a>
+  <a href="#projects" onclick="closeMobile()">Projects</a>
+  <a href="#activism" onclick="closeMobile()">Activism</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<!-- Content -->
+<div class="content-wrap">
+
+  <!-- Nav -->
+  <nav id="mainNav">
+    <a href="#" class="nav-logo"><span class="prompt">~$</span> CyberAlstor</a>
+    <div class="nav-links">
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#activism">Activism</a>
+      <a href="#contact">Contact</a>
+      <a href="https://github.com/CyberAlstor" class="btn btn-outline" style="padding:8px 14px;font-size:11px;">
+        <i data-lucide="computer" style="width:14px;height:14px;"></i> GitHub
+      </a>
+    </div>
+    <button class="mobile-toggle" onclick="toggleMobile()" aria-label="Toggle menu">
+      <i data-lucide="menu" style="width:22px;height:22px;"></i>
+    </button>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-terminal reveal">
+        <div class="terminal-bar">
+          <div class="terminal-dot r"></div>
+          <div class="terminal-dot y"></div>
+          <div class="terminal-dot g"></div>
+          <span class="terminal-title">bash — whoami</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="prompt-line">~$ </span><span class="cmd">whoami</span></div>
+          <div><span class="output">programmer, reverser engineer, free-software advocate</span></div>
+          <div><span class="prompt-line">~$ </span><span class="cmd">cat ~/Documents/qoutes.txt</span></div>
+          <div><span class="output">"If the users don't control the program, the program controls the users. With proprietary software, there is always some entity, the "owner" of the program, that controls the program and through it, exercises power over its users. A nonfree program is a yoke, an instrument of unjust power."</span> - Richard Stallman</div>
+          <div><span class="prompt-line">~$ </span><span class="cmd">ls ~/skills/</span></div>
+          <div><span class="highlight">Reverse_engineering/</span>  <span class="highlight">Progamming/</span>  <span class="highlight">FSF_activism/</span>  <span class="highlight">Security/</span> <span class="highlight">Documents/</span></div>
+          <div><span class="prompt-line">~$ </span><span class="cmd">echo $EDITOR</span></div>
+          <div><span class="val">GNU Emacs</span></div>
+          <div><span class="prompt-line">~$ </span><span class="cursor-blink"></span></div>
+        </div>
+      </div>
+
+      <div class="hero-tagline reveal" style="transition-delay:0.1s;">// software researcher &middot; reverse engineer &middot; activist</div>
+      <h1 class="hero-name reveal" style="transition-delay:0.2s;">Build free software.<br>Free closed software.</h1>
+      <p class="hero-desc reveal" style="transition-delay:0.3s;">
+        I write programs, reverse-engineer binaries, and fight for your right to
+        understand the software running on your hardware. All my work is free and open source.
+      </p>
+      <div class="hero-actions reveal" style="transition-delay:0.4s;">
+        <a href="#projects" class="btn btn-primary">
+          <i data-lucide="code-2" style="width:15px;height:15px;"></i> View Projects
+        </a>
+        <a href="#contact" class="btn btn-outline">
+          <i data-lucide="mail" style="width:15px;height:15px;"></i> Get In Touch
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="section-header reveal">
+      <div class="section-label">Skills & Expertise</div>
+      <h2 class="section-title">What I Do</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal" style="transition-delay:0.05s;">
+        <div class="skill-icon"><i data-lucide="cpu" style="width:20px;height:20px;"></i></div>
+        <h3>Reverse Engineering</h3>
+        <p>Decompiling and analyzing proprietary binaries to understand their behavior, find vulnerabilities, and reclaim control over your devices.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Ghidra</span>
+          <span class="skill-tag">IDA Pro</span>
+          <span class="skill-tag">radare2</span>
+          <span class="skill-tag">x86/ARM</span>
+          <span class="skill-tag">Firmware</span>
+        </div>
+      </div>
+      <div class="skill-card reveal" style="transition-delay:0.1s;">
+        <div class="skill-icon"><i data-lucide="code-2" style="width:20px;height:20px;"></i></div>
+        <h3>Programming</h3>
+        <p>Low-level software development. I honestly can't stand abstractions in Python and other languages. Keep it close to the hardware for performance, quality, and clarity of function.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">C/C++</span>
+          <span class="skill-tag">Vulkan API</span>
+        </div>
+      </div>
+      <div class="skill-card reveal" style="transition-delay:0.15s;">
+        <div class="skill-icon"><i data-lucide="terminal" style="width:20px;height:20px;"></i></div>
+        <h3>Documentation and Code Reviewer</h3>
+        <p>Maintianing proper documentation and reviewing code to ensure security and ease-of-use for free and open source software.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Documentation</span>
+          <span class="skill-tag">Bash</span>
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag">C/C++</span>
+          <span class="skill-tag">Python</span>
+        </div>
+      </div>
+      <div class="skill-card reveal" style="transition-delay:0.2s;">
+        <div class="skill-icon"><i data-lucide="shield" style="width:20px;height:20px;"></i></div>
+        <h3>Security Research</h3>
+        <p>Researching vulnerabilities in low-level programs and software to protect users and push for better security practices.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Exploits</span>
+          <span class="skill-tag">CTF</span>
+          <span class="skill-tag">CVEs</span>
+        </div>
+      </div>
+      <div class="skill-card reveal" style="transition-delay:0.25s;">
+        <div class="skill-icon"><i data-lucide="globe" style="width:20px;height:20px;"></i></div>
+        <h3>Web & API Development</h3>
+        <p>Full-stack web development focused on privacy, self-hosting, and minimal data collection. Support LibreJS and Free-licesned Javascript!</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Javascript</span>
+          <span class="skill-tag">HTML</span>
+          <span class="skill-tag">CSS</span>
+        </div>
+      </div>
+      <div class="skill-card reveal" style="transition-delay:0.3s;">
+        <div class="skill-icon"><i data-lucide="megaphone" style="width:20px;height:20px;"></i></div>
+        <h3>FOSS Advocacy</h3>
+        <p>Writing, speaking, and organizing around software freedom. Pushing for the adoption of free and open source hardware/software and user rights.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">FSF</span>
+          <span class="skill-tag">GNU</span>
+          <span class="skill-tag">EFF</span>
+          <span class="skill-tag">GPLv3 Licensing</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="section-header reveal">
+      <div class="section-label">Open Source Projects</div>
+      <h2 class="section-title">Projects</h2>
+    </div>
+       <div class="skill-card reveal" style="transition-delay:0.3s;">
+        <div class="skill-icon"><i data-lucide="terminal" style="width:20px;height:20px;"></i></div>
+        <h3>No Complete Projects</h3>
+        <p>Not current projects have been completed.</p>
+      </div>
+  </section>
+
+  <!-- Activism -->
+  <section class="activism-section" id="activism" style="padding-top:80px;padding-bottom:80px;">
+    <div class="activism-inner">
+      <div class="section-header reveal">
+        <div class="section-label">Activism & Advocacy</div>
+        <h2 class="section-title">Software Freedom Is Non-Negotiable</h2>
+      </div>
+      <div class="manifesto reveal" style="transition-delay:0.1s;">
+        <p>
+          I believe that <strong>the right to access the code freely that runs on your computer is a fundamental right through free and open source software</strong>,
+          not a privilege that is granted by corporations that hold you in legal ties. Every locked away piece of software, binary, and DRM technology takes away your freedom.
+          Fight back and take your freedom, break away from restrictive proprietary solutions, and embrace freedom in software.
+        </p>
+        <br>
+        <p>
+          I reverse engineer not just for the curiosity of how something works, but also to support freeing proprietary software. Just because something is proprietary,
+          doesn't mean we can't make free alternatives.
+        </p>
+      </div>
+      <div class="causes-grid">
+        <div class="cause-card reveal" style="transition-delay:0.05s;">
+          <div class="icon"><i data-lucide="unlock" style="width:20px;height:20px;"></i></div>
+          <h4>Right to Repair</h4>
+          <p>Fight for the legislation that makes it legal to fix your own devices freely.</p>
+        </div>
+        <div class="cause-card reveal" style="transition-delay:0.1s;">
+          <div class="icon"><i data-lucide="file-check" style="width:20px;height:20px;"></i></div>
+          <h4>Glorious GPL</h4>
+          <p>Hold companies accountable when they violate copyleft licenses. And support people to use the GPL.</p>
+        </div>
+        <div class="cause-card reveal" style="transition-delay:0.15s;">
+          <div class="icon"><i data-lucide="eye-off" style="width:20px;height:20px;"></i></div>
+          <h4>Anti-DRM</h4>
+          <p>Oppose digital restrictions that treat users unfairly in one's right to own and share their digital properties.</p>
+        </div>
+        <div class="cause-card reveal" style="transition-delay:0.2s;">
+          <div class="icon"><i data-lucide="users" style="width:20px;height:20px;"></i></div>
+          <h4>Digital Privacy</h4>
+          <p>Advocate for encrypted, decentralized, surveillance-free technologies.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="section-header reveal">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Get In Touch</h2>
+    </div>
+    <div class="contact-terminal reveal" style="transition-delay:0.1s;">
+      <div class="terminal-bar">
+        <div class="terminal-dot r"></div>
+        <div class="terminal-dot y"></div>
+        <div class="terminal-dot g"></div>
+        <span class="terminal-title">contact — secure channel</span>
+      </div>
+      <div class="contact-body">
+        <div class="contact-info">
+          <div><span class="label">Email:  </span><span class="value"><a href="mailto:CyberAlstor@protonmail.com">CyberAlstor@protonmail.com</a></span></div>
+          <div><span class="label">Github: </span><span class="value"><a href="https://github.com/CyberAlstor">CyberAlstor</a></span></div>
+          <div><span class="label">YouTube: </span><span class="value"><a href="https://www.youtube.com/@CyberAlstor-q2q">CyberAlstor</a></span></div>
+          <div><span class="label">Odysee: </span><span class="value"><a href="https://odysee.com/@CyberAlstor:c">CyberAlstor</a></span></div>
+          <div><span class="label">SimpleX: </span><span class="value"><a href="https://smp15.simplex.im/a#DRTVKKdqOFaGBsd8XjbtLtqSxgdU9ZO3LnNeiz_4xD0">https://smp15.simplex.im/a#DRTVKKdqOFaGBsd8XjbtLtqSxgdU9ZO3LnNeiz_4xD0</a></span></div>
+          <br>
+          <div style="color:var(--text-muted);font-size:11px;">
+            <i data-lucide="shield-check" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>
+            Please encrypt sensitive emails with my PGP key.
+            <br>
+            -----BEGIN PGP PUBLIC KEY BLOCK-----<br>
+            <br>
+            xjMEafv6xBYJKwYBBAHaRw8BAQdA7HqWpE60raNqlj/3eaUvlZbbtyDGWUNY<br>
+            a3AVXqEpJtDNN0N5YmVyQWxzdG9yQHByb3Rvbm1haWwuY29tIDxDeWJlckFs<br>
+            c3RvckBwcm90b25tYWlsLmNvbT7CwBEEExYKAIMFgmn7+sQDCwkHCRDGrmVd<br>
+            hWbfrkUUAAAAAAAcACBzYWx0QG5vdGF0aW9ucy5vcGVucGdwanMub3JnR1eQ<br>
+            g7TvaF0/kHbPj7+cYOkahVkmR6U0V8SM6M0o36UDFQoIBBYAAgECGQECmwMC<br>
+            HgEWIQRt3s7748skZw0EE8HGrmVdhWbfrgAAcfsA/04tXj+QBADLdT4FeqeY<br>
+            /L1NTcZlez+Pqs8C3cH7GOpqAQCpSqST+r5BAMz5qgEwipjRgx4fE5bJvhgB<br>
+            MSFT0m6TB844BGn7+sQSCisGAQQBl1UBBQEBB0DDOZ8UHeaqq8GCptvSTrVX<br>
+            nytWscEtT55RseAHN0CHfAMBCAfCvgQYFgoAcAWCafv6xAkQxq5lXYVm365F<br>
+            FAAAAAAAHAAgc2FsdEBub3RhdGlvbnMub3BlbnBncGpzLm9yZ03wXFKyKa8Y<br>
+            Blk2BNGwguWTVhJ607DFOf+wzRXXt6qGApsMFiEEbd7O++PLJGcNBBPBxq5l<br>
+            XYVm364AAAJUAQDZJ6nHiaYbu4BKT6csS0iPznQ4rhZro34/X0Ysyil+1AD/<br>
+            Wgpjfw6BtbUcOwvk3cZS5/3dp3JQZJNZkmXm3hqRKQk=<br>
+            =UOvD<br>
+            -----END PGP PUBLIC KEY BLOCK-----
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      Free as in freedom<br><br>
+      Licensed under <a href="#">GPL-3.0</a> · Built with free software only<br>
+      No cookies · No trackers · Free JavaScript<br>
+      © 2026 CyberAlstor
+    </p>
+  </footer>
+
+</div>
+
+<!-- Toast notification -->
+<div id="toast" style="
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--bg-card);border:1px solid var(--green-dim);color:var(--green);
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  padding:12px 24px;border-radius:8px;z-index:200;
+  box-shadow:0 10px 30px -10px #00000080;
+  transition:transform 0.4s cubic-bezier(0.16,1,0.3,1),opacity 0.4s;
+  opacity:0;pointer-events:none;
+"></div>
+
+<script>
+// ─── Binary Rain ───
+const canvas = document.getElementById('binary-rain');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const fontSize = 14;
+let columns = Math.floor(canvas.width / fontSize);
+let drops = Array(columns).fill(1);
+
+function drawRain() {
+  ctx.fillStyle = 'rgba(5, 10, 21, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#0ea5e9';
+  ctx.font = fontSize + 'px JetBrains Mono, monospace';
+
+  for (let i = 0; i < drops.length; i++) {
+    const char = Math.random() > 0.5 ? '1' : '0';
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+      drops[i] = 0;
+    }
+    const speed = 0.5;
+    drops[i] += speed;
+  }
+  requestAnimationFrame(drawRain);
+}
+drawRain();
+
+window.addEventListener('resize', () => {
+  columns = Math.floor(canvas.width / fontSize);
+  drops = Array(columns).fill(1);
+});
+
+// ─── Nav Scroll Effect ───
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ─── Scroll Reveal ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ─── Mobile Menu ───
+function toggleMobile() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+function closeMobile() {
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+// ─── Toast ───
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  t.style.opacity = '1';
+  t.style.pointerEvents = 'auto';
+  setTimeout(() => {
+    t.style.transform = 'translateX(-50%) translateY(80px)';
+    t.style.opacity = '0';
+    t.style.pointerEvents = 'none';
+  }, 3000);
+}
+
+// ─── Form Submit ───
+function handleSubmit(e) {
+  e.preventDefault();
+  showToast('✓ message encrypted & queued for delivery');
+  e.target.reset();
+}
+
+// ─── Init Lucide Icons ───
+lucide.createIcons();
+</script>
+</body>
+</html>
